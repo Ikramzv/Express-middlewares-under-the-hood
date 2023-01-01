@@ -25,7 +25,9 @@ class Express {
   runMiddlewares() {
     const handler = this.middlewares.shift();
     if (handler) handler(this.req, this.res, this.next);
-    while (!this.value) {}
+    process.on("exit", () => {
+      while (!this.value) {}
+    });
   }
 
   get(...handlers) {
@@ -52,10 +54,11 @@ app.get(
     req.value = 0;
     console.log(req.value);
     next();
+    res.send("hello");
+    // res.send("hello");
   },
   (req, res, next) => {
     req.value++;
     console.log(req.value);
-    res.send("eh");
   }
 );
