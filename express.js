@@ -6,6 +6,10 @@ class Express {
     this.req = {};
     this.res = {
       send: (value) => {
+        if (this.value)
+          throw new Error(
+            "Cannot set headers after they are sent to the client"
+          );
         this.value = value;
         return value;
       },
@@ -18,7 +22,7 @@ class Express {
   next(err) {
     if (err) throw new Error(err);
     if (this.value)
-      throw new Error("Response has been already sent to the client");
+      throw new Error("Cannot set headers after they are sent to the client");
     this.runMiddlewares();
   }
 
@@ -52,13 +56,10 @@ const app = new Express();
 app.get(
   (req, res, next) => {
     req.value = 0;
-    console.log(req.value);
     next();
-    res.send("hello");
-    // res.send("hello");
+    res.send("hello world");
   },
   (req, res, next) => {
     req.value++;
-    console.log(req.value);
   }
 );
